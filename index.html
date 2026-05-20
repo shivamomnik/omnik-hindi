@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Omnik English Training</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;700&family=Barlow:wght@400;600;700;800;900&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --orange: #E85D00; --dark: #F5F2EE; --dark2: #FFFFFF; --dark3: #EDE9E4;
+      --text: #1A1208; --muted: rgba(26,18,8,0.5); --gold: #B8860B; --green: #1A7A5E; --red: #C0392B;
+    }
+    body { min-height:100vh; background:#F5F2EE; font-family:'Barlow','Noto Sans Devanagari',sans-serif; color:var(--text); overflow-x:hidden; }
+    body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(232,93,0,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(232,93,0,0.05) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; z-index:0; }
+    .top-bar { height:4px; background:repeating-linear-gradient(90deg,var(--orange) 0px,var(--orange) 30px,#F5F2EE 30px,#F5F2EE 40px); }
+    header { display:flex; justify-content:space-between; align-items:center; padding:14px 20px; background:#FFFFFF; border-bottom:1px solid rgba(232,93,0,0.2); position:sticky; top:0; z-index:10; }
+    .logo { display:flex; align-items:center; gap:10px; }
+    .logo-icon { width:36px; height:36px; background:var(--orange); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:900; color:#fff; font-family:'Barlow Condensed',sans-serif; }
+    .logo-text { font-family:'Barlow Condensed',sans-serif; font-weight:900; font-size:20px; letter-spacing:1px; }
+    .logo-sub { font-size:11px; color:var(--orange); font-weight:700; letter-spacing:2px; text-transform:uppercase; }
+    .progress-badge { background:rgba(232,93,0,0.1); border:1px solid rgba(232,93,0,0.35); border-radius:6px; padding:5px 12px; font-size:12px; color:var(--orange); font-weight:700; letter-spacing:1px; }
+    .container { max-width:520px; margin:0 auto; padding:28px 18px; position:relative; z-index:1; }
+
+    /* HOME */
+    .home-tag { font-size:11px; color:var(--orange); font-weight:800; letter-spacing:3px; text-transform:uppercase; margin-bottom:10px; }
+    .home-title { font-family:'Barlow Condensed',sans-serif; font-size:52px; font-weight:900; line-height:1; margin-bottom:12px; }
+    .home-sub { font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:32px; }
+    .big-btn { display:block; width:100%; border:none; border-radius:14px; padding:26px 24px; cursor:pointer; font-family:inherit; transition:transform 0.15s,box-shadow 0.15s; text-align:left; margin-bottom:14px; }
+    .big-btn:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(0,0,0,0.15); }
+    .btn-lessons { background:var(--orange); }
+    .btn-quiz { background:#FFFFFF; border:1px solid rgba(232,93,0,0.35); }
+    .btn-icon { font-size:32px; margin-bottom:8px; display:block; }
+    .btn-title { font-family:'Barlow Condensed',sans-serif; font-size:26px; font-weight:900; color:#fff; letter-spacing:1px; text-transform:uppercase; display:block; }
+    .btn-desc { font-size:13px; color:rgba(255,255,255,0.65); display:block; margin-top:2px; }
+    .btn-count { float:right; font-family:'Barlow Condensed',sans-serif; font-size:40px; font-weight:900; color:rgba(255,255,255,0.2); line-height:1; }
+
+    /* LESSON */
+    .nav-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+    .back-btn { background:none; border:none; color:var(--orange); font-size:14px; cursor:pointer; font-weight:700; font-family:inherit; }
+    .counter { font-size:12px; color:var(--muted); font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+    .word-badge { display:inline-block; border-radius:4px; padding:3px 12px; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; margin-bottom:16px; background:rgba(232,93,0,0.1); color:var(--orange); border:1px solid rgba(232,93,0,0.35); }
+    .flash-card { background:var(--dark2); border:1px solid rgba(0,0,0,0.08); border-radius:16px; padding:36px 28px; text-align:center; min-height:230px; cursor:pointer; margin-bottom:18px; transition:border-color 0.3s,background 0.3s; box-shadow:0 4px 20px rgba(0,0,0,0.08),inset 0 1px 0 rgba(255,255,255,0.9); position:relative; overflow:hidden; }
+    .flash-card::before { content:''; position:absolute; top:0;left:0;right:0;height:3px; background:var(--orange); opacity:0.5; }
+    .flash-card.flipped { border-color:rgba(232,93,0,0.4); background:rgba(232,93,0,0.06); }
+    .flash-card.flipped::before { opacity:1; }
+    .card-hindi { font-size:18px; color:var(--muted); margin-bottom:6px; font-style:italic; }
+    .card-sentence { font-size:22px; font-weight:700; margin-bottom:18px; line-height:1.4; }
+    .card-hint { font-size:12px; color:rgba(26,18,8,0.25); letter-spacing:1px; }
+    .card-english { font-size:22px; font-weight:900; color:var(--orange); margin-bottom:14px; font-family:'Barlow Condensed',sans-serif; letter-spacing:0.5px; line-height:1.3; }
+    .card-pronounce { font-size:13px; color:var(--muted); margin-bottom:16px; font-style:italic; }
+    .tip-box { background:rgba(232,93,0,0.06); border-radius:10px; padding:12px 16px; border-left:3px solid var(--orange); text-align:left; }
+    .tip-label { font-size:10px; color:var(--orange); font-weight:800; letter-spacing:2px; text-transform:uppercase; margin-bottom:4px; }
+    .tip-text { font-size:13px; color:var(--muted); line-height:1.5; }
+
+    .lesson-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+    .nav-btn { background:#EDE9E4; border:1px solid rgba(0,0,0,0.1); color:var(--text); border-radius:8px; padding:10px 20px; font-size:14px; cursor:pointer; font-weight:700; font-family:inherit; }
+    .learned-btn { background:var(--orange); border:none; color:#fff; border-radius:8px; padding:10px 20px; font-size:14px; cursor:pointer; font-weight:700; font-family:inherit; }
+    .learned-btn.done { background:var(--green); }
+    .quiz-start-btn { background:var(--dark3); border:1px solid var(--orange); color:var(--orange); border-radius:8px; padding:10px 20px; font-size:14px; cursor:pointer; font-weight:700; font-family:inherit; }
+
+    /* QUIZ */
+    .score-row { display:flex; gap:10px; align-items:center; margin-bottom:10px; }
+    .score-badge { background:rgba(232,93,0,0.12); border:1px solid rgba(232,93,0,0.35); border-radius:6px; padding:4px 12px; font-size:13px; color:var(--orange); font-weight:800; }
+    .streak-badge { background:rgba(184,134,11,0.12); border:1px solid rgba(184,134,11,0.35); border-radius:6px; padding:4px 12px; font-size:13px; color:var(--gold); font-weight:800; }
+    .streak-pop { text-align:center; font-size:17px; font-weight:800; color:var(--gold); padding:8px; margin-bottom:8px; animation:popIn 0.4s ease; }
+    @keyframes popIn { 0%{transform:scale(0.7);opacity:0} 60%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
+    .quiz-card { background:var(--dark2); border:1px solid rgba(0,0,0,0.08); border-radius:16px; padding:28px 24px; text-align:center; margin-bottom:18px; position:relative; overflow:hidden; }
+    .quiz-card::before { content:''; position:absolute; top:0;left:0;right:0;height:3px; background:var(--orange); }
+    .quiz-label { font-size:10px; color:var(--orange); font-weight:800; letter-spacing:2px; text-transform:uppercase; margin-bottom:10px; }
+    .quiz-hindi-sentence { font-size:16px; color:rgba(26,18,8,0.55); margin-bottom:12px; line-height:1.5; padding-bottom:12px; border-bottom:1px solid rgba(0,0,0,0.08); }
+    .quiz-sentence { font-size:20px; font-weight:700; line-height:1.5; margin-bottom:8px; }
+    .quiz-blank { color:var(--orange); border-bottom:2px solid var(--orange); padding:0 4px; font-style:italic; }
+    .quiz-prompt { font-size:12px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; font-weight:700; margin-top:10px; }
+
+    .options-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:20px; }
+    .option-btn { background:#EDE9E4; border:1px solid rgba(0,0,0,0.1); color:var(--text); border-radius:10px; padding:14px 10px; font-size:14px; font-weight:700; cursor:pointer; font-family:inherit; transition:all 0.15s; text-align:center; }
+    .option-btn:hover:not(:disabled) { border-color:var(--orange); color:var(--orange); }
+    .option-btn.correct { background:rgba(6,214,160,0.15); border:2px solid var(--green); color:var(--green); }
+    .option-btn.wrong { background:rgba(239,71,111,0.15); border:2px solid var(--red); color:var(--red); }
+
+    .progress-bar { height:5px; background:rgba(0,0,0,0.1); border-radius:4px; overflow:hidden; }
+    .progress-fill { height:100%; background:var(--orange); border-radius:4px; transition:width 0.4s ease; }
+
+    /* RESULT */
+    .result-card { background:var(--dark2); border:1px solid rgba(0,0,0,0.08); border-radius:16px; padding:44px 28px; text-align:center; margin-bottom:20px; position:relative; overflow:hidden; }
+    .result-card::before { content:''; position:absolute; top:0;left:0;right:0;height:4px; background:var(--orange); }
+    .result-emoji { font-size:60px; margin-bottom:14px; }
+    .result-title { font-family:'Barlow Condensed',sans-serif; font-size:28px; font-weight:900; margin-bottom:14px; color:var(--orange); letter-spacing:1px; text-transform:uppercase; }
+    .result-score { font-family:'Barlow Condensed',sans-serif; font-size:52px; font-weight:900; margin-bottom:4px; }
+    .result-percent { font-size:15px; color:var(--muted); }
+    .result-actions { display:flex; gap:12px; justify-content:center; }
+    .retry-btn { background:var(--orange); border:none; color:#fff; border-radius:8px; padding:14px 28px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit; }
+    .home-btn { background:#EDE9E4; border:1px solid rgba(0,0,0,0.12); color:var(--text); border-radius:8px; padding:14px 28px; font-size:15px; font-weight:800; cursor:pointer; font-family:inherit; }
+
+    .screen { display:none; }
+    .screen.active { display:block; }
+  </style>
+</head>
+<body>
+<div class="top-bar"></div>
+<header>
+  <div class="logo">
+    <div class="logo-icon">O</div>
+    <div>
+      <div class="logo-text">OMNIK</div>
+      <div class="logo-sub">English Training</div>
+    </div>
+  </div>
+  <div class="progress-badge" id="progressBadge">0/24 LEARNED</div>
+</header>
+
+<!-- HOME -->
+<div id="homeScreen" class="screen active">
+  <div class="container">
+    <p class="home-tag">🏭 Polyethylene Film Division</p>
+    <h1 class="home-title">SPEAK<br><span style="color:var(--orange)">ENGLISH</span><br>AT WORK</h1>
+    <p class="home-sub">असली वाक्य सीखें जो काम आएंगे — मशीनें, सुरक्षा, और ऑफिस।<br>Learn real sentences you will use every day at Omnik.</p>
+    <button class="big-btn btn-lessons" onclick="startLessons()">
+      <span class="btn-count">24</span>
+      <span class="btn-icon">📖</span>
+      <span class="btn-title">Lessons</span>
+      <span class="btn-desc">Flash cards — Hindi में पढ़ें, English सीखें</span>
+    </button>
+    <button class="big-btn btn-quiz" onclick="startQuiz()">
+      <span class="btn-count" style="color:rgba(255,107,0,0.3)">?</span>
+      <span class="btn-icon">🎯</span>
+      <span class="btn-title" style="color:var(--orange)">Quiz</span>
+      <span class="btn-desc">वाक्य पूरे करें — fill in the blank</span>
+    </button>
+  </div>
+</div>
+
+<!-- LESSON -->
+<div id="lessonScreen" class="screen">
+  <div class="container">
+    <div class="nav-row">
+      <button class="back-btn" onclick="goHome()">← BACK</button>
+      <span class="counter" id="lessonCounter">1 / 24</span>
+    </div>
+    <div class="word-badge" id="wordBadge">🏭 Factory Floor</div>
+    <div class="flash-card" id="flashCard" onclick="flipCard()">
+      <div id="cardFront">
+        <p class="card-hindi" id="cardHindi"></p>
+        <p class="card-sentence" id="cardSentence"></p>
+        <p class="card-hint">▼ TAP TO SEE ENGLISH</p>
+      </div>
+      <div id="cardBack" style="display:none">
+        <p class="card-english" id="cardEnglish"></p>
+        <div class="tip-box">
+          <p class="tip-label">💡 Key Word</p>
+          <p class="tip-text" id="tipText"></p>
+        </div>
+      </div>
+    </div>
+    <div class="lesson-actions">
+      <button class="nav-btn" id="prevBtn" onclick="prevLesson()">← PREV</button>
+      <button class="learned-btn" id="learnedBtn" onclick="markLearned()">✓ LEARNED</button>
+      <button class="nav-btn" id="nextBtn" onclick="nextLesson()">NEXT →</button>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="quizScreen" class="screen">
+  <div class="container">
+    <div class="nav-row">
+      <button class="back-btn" onclick="goHome()">← BACK</button>
+      <span class="counter" id="quizCounter">1 / 24</span>
+    </div>
+    <div class="score-row">
+      <span class="score-badge" id="scoreBadge">⭐ 0 PTS</span>
+      <span class="streak-badge" id="streakBadge" style="display:none">🔥 streak</span>
+    </div>
+    <div class="streak-pop" id="streakPop" style="display:none"></div>
+    <div class="quiz-card">
+      <p class="quiz-label">वाक्य पूरा करें — Complete the sentence</p>
+      <p class="quiz-hindi-sentence" id="quizHindiSentence"></p>
+      <p class="quiz-sentence" id="quizSentence"></p>
+      <p class="quiz-prompt">सही शब्द चुनें — Choose the correct word</p>
+    </div>
+    <div class="options-grid" id="optionsGrid"></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="resultScreen" class="screen">
+  <div class="container">
+    <div class="result-card">
+      <p class="result-emoji" id="resultEmoji">🏆</p>
+      <h2 class="result-title" id="resultTitle"></h2>
+      <p class="result-score" id="resultScore"></p>
+      <p class="result-percent" id="resultPercent"></p>
+    </div>
+    <div class="result-actions">
+      <button class="retry-btn" onclick="startQuiz()">🔄 RETRY</button>
+      <button class="home-btn" onclick="goHome()">🏠 HOME</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Each card has:
+//   hindi: the Hindi sentence shown on front
+//   english: the full English sentence shown on back
+//   tip: key word/phrase explanation
+//   blank: the sentence with ___ where the answer goes
+//   answer: the word that fills the blank
+//   options: 3 wrong choices (plausible alternatives)
+//   badge: label shown on lesson card
+
+const lessons = [
+  // FACTORY FLOOR
+  {
+    badge:"🏭 Factory Floor",
+    hindi:"काटने वाले विभाग में जाओ और वो रोल ले आओ।",
+    english:"Go to the cutting department and bring that roll.",
+    tip:"'Department' = विभाग. Use this when telling someone where to go.",
+    blank:'Go to the cutting ___ and bring that roll.',
+    answer:'department',
+    options:['machine','office','store']
+  },
+  {
+    badge:"🏭 Factory Floor",
+    hindi:"एक्सट्रूडर का तापमान बहुत ज़्यादा है।",
+    english:"The extruder temperature is too high.",
+    tip:"'Temperature' = तापमान. 'Too high' means more than it should be.",
+    blank:'The extruder ___ is too high.',
+    answer:'temperature',
+    options:['speed','pressure','weight']
+  },
+  {
+    badge:"🏭 Factory Floor",
+    hindi:"वो फिल्म रोल यहाँ लाओ।",
+    english:"Bring that film roll over here.",
+    tip:"'Over here' = इधर आओ. A simple instruction used all day on the floor.",
+    blank:'Bring that film roll ___ here.',
+    answer:'over',
+    options:['right','down','up']
+  },
+  {
+    badge:"🏭 Factory Floor",
+    hindi:"फिल्म की मोटाई जांचो।",
+    english:"Check the thickness of the film.",
+    tip:"'Thickness' = मोटाई. Always say 'check the thickness' before a new batch.",
+    blank:'Check the ___ of the film.',
+    answer:'thickness',
+    options:['weight','colour','length']
+  },
+  {
+    badge:"🏭 Factory Floor",
+    hindi:"वाइंडर की रफ्तार बहुत तेज़ है, इसे धीमा करो।",
+    english:"The winder speed is too fast, slow it down.",
+    tip:"'Slow it down' = धीमा करो. Use when a machine is running too fast.",
+    blank:'The winder speed is too fast, ___ it down.',
+    answer:'slow',
+    options:['bring','shut','turn']
+  },
+  {
+    badge:"🏭 Factory Floor",
+    hindi:"स्टोर से और कच्चा माल ले आओ।",
+    english:"Bring more raw material from the store.",
+    tip:"'Raw material' = कच्चा माल. The store is where materials are kept.",
+    blank:'Bring more ___ material from the store.',
+    answer:'raw',
+    options:['new','hot','extra']
+  },
+  {
+    badge:"🏭 Factory Floor",
+    hindi:"इस बैच में खराबी है, इसे अलग रखो।",
+    english:"There is a defect in this batch, keep it aside.",
+    tip:"'Keep it aside' = अलग रखो. Use this to separate rejected material.",
+    blank:'There is a ___ in this batch, keep it aside.',
+    answer:'defect',
+    options:['problem','delay','order']
+  },
+  {
+    badge:"🏭 Factory Floor",
+    hindi:"मशीन नंबर तीन पर जाओ और देखो क्या हो रहा है।",
+    english:"Go to machine number three and see what is happening.",
+    tip:"'What is happening?' = क्या हो रहा है? Use this when there is an issue.",
+    blank:'Go to machine number three and see what is ___.',
+    answer:'happening',
+    options:['wrong','ready','broken']
+  },
+  {
+    badge:"🏭 Factory Floor",
+    hindi:"आज का उत्पादन लक्ष्य पाँच सौ किलो है।",
+    english:"Today's production target is five hundred kilos.",
+    tip:"'Target' = लक्ष्य. Always confirm the production target at shift start.",
+    blank:"Today's production ___ is five hundred kilos.",
+    answer:'target',
+    options:['order','report','plan']
+  },
+  {
+    badge:"🏭 Factory Floor",
+    hindi:"पैकिंग के लिए तैयार रोल वहाँ रखो।",
+    english:"Put the rolls that are ready for packing over there.",
+    tip:"'Over there' = वहाँ. Opposite of 'over here'.",
+    blank:'Put the rolls that are ready for packing over ___.',
+    answer:'there',
+    options:['here','inside','outside']
+  },
+
+  // SAFETY
+  {
+    badge:"⚠️ Safety",
+    hindi:"मशीन के पास हमेशा सुरक्षा चश्मा पहनो।",
+    english:"Always wear safety goggles near the machine.",
+    tip:"'Always' = हमेशा. A safety rule that has no exception.",
+    blank:'Always wear safety ___ near the machine.',
+    answer:'goggles',
+    options:['gloves','shoes','helmet']
+  },
+  {
+    badge:"⚠️ Safety",
+    hindi:"आग बुझाने वाला यंत्र निकास के पास है।",
+    english:"The fire extinguisher is near the exit.",
+    tip:"Know where the fire extinguisher is before you need it.",
+    blank:'The fire ___ is near the exit.',
+    answer:'extinguisher',
+    options:['exit','alarm','box']
+  },
+  {
+    badge:"⚠️ Safety",
+    hindi:"आपातकालीन निकास को मत रोको।",
+    english:"Do not block the emergency exit.",
+    tip:"'Block' = रोकना. Never put material in front of emergency exits.",
+    blank:'Do not ___ the emergency exit.',
+    answer:'block',
+    options:['open','use','close']
+  },
+  {
+    badge:"⚠️ Safety",
+    hindi:"गर्म सामग्री छूते समय दस्ताने पहनो।",
+    english:"Wear gloves when handling hot material.",
+    tip:"'Handling' = छूना / संभालना. Use gloves for hot or sharp material.",
+    blank:'Wear ___ when handling hot material.',
+    answer:'gloves',
+    options:['goggles','shoes','a mask']
+  },
+  {
+    badge:"⚠️ Safety",
+    hindi:"कोई भी खतरा सुपरवाइज़र को बताओ।",
+    english:"Report any hazard to the supervisor.",
+    tip:"'Report' = बताना / सूचित करना. Never ignore a hazard.",
+    blank:'Report any ___ to the supervisor.',
+    answer:'hazard',
+    options:['issue','delay','mistake']
+  },
+  {
+    badge:"⚠️ Safety",
+    hindi:"सफाई से पहले मशीन बंद करो।",
+    english:"Shut down the machine before cleaning.",
+    tip:"'Shut down' = बंद करना. Always shut down before any maintenance.",
+    blank:'___ the machine before cleaning.',
+    answer:'Shut down',
+    options:['Start','Check','Move']
+  },
+  {
+    badge:"⚠️ Safety",
+    hindi:"प्राथमिक चिकित्सा बॉक्स ऑफिस में है।",
+    english:"The first aid box is in the office.",
+    tip:"'First aid' = प्राथमिक चिकित्सा. Know where it is on your first day.",
+    blank:'The ___ aid box is in the office.',
+    answer:'first',
+    options:['safety','medical','emergency']
+  },
+
+  // OFFICE
+  {
+    badge:"💼 Office",
+    hindi:"आज खरीद आदेश भेज दो।",
+    english:"Please send the purchase order today.",
+    tip:"'Purchase order' = खरीद आदेश. Written request to buy goods.",
+    blank:'Please send the ___ order today.',
+    answer:'purchase',
+    options:['delivery','sales','production']
+  },
+  {
+    badge:"💼 Office",
+    hindi:"डिलीवरी शुक्रवार को है।",
+    english:"The delivery is scheduled for Friday.",
+    tip:"'Scheduled' = तय किया हुआ. Use this for any planned event.",
+    blank:'The delivery is ___ for Friday.',
+    answer:'scheduled',
+    options:['planned','done','ready']
+  },
+  {
+    badge:"💼 Office",
+    hindi:"हमारी बैठक सुबह दस बजे है।",
+    english:"We have a meeting at ten in the morning.",
+    tip:"'Meeting' = बैठक. Always confirm time and location.",
+    blank:'We have a ___ at ten in the morning.',
+    answer:'meeting',
+    options:['call','visit','shift']
+  },
+  {
+    badge:"💼 Office",
+    hindi:"रोज़ाना उत्पादन रिपोर्ट जमा करो।",
+    english:"Submit the daily production report.",
+    tip:"'Submit' = जमा करना. Reports go to your supervisor at end of shift.",
+    blank:'___ the daily production report.',
+    answer:'Submit',
+    options:['Send','Write','Read']
+  },
+  {
+    badge:"💼 Office",
+    hindi:"समय सीमा इस हफ्ते के अंत तक है।",
+    english:"The deadline is by the end of this week.",
+    tip:"'Deadline' = समय सीमा. The last date or time to complete a task.",
+    blank:'The ___ is by the end of this week.',
+    answer:'deadline',
+    options:['target','order','date']
+  },
+  {
+    badge:"💼 Office",
+    hindi:"ग्राहक पतली फिल्म चाहता है।",
+    english:"The customer wants thinner film.",
+    tip:"'Thinner' = पतला. Customers often specify exact film thickness.",
+    blank:'The customer wants ___ film.',
+    answer:'thinner',
+    options:['stronger','longer','better']
+  },
+  {
+    badge:"💼 Office",
+    hindi:"हमें गुणवत्ता के बारे में शिकायत मिली है।",
+    english:"We have received a complaint about the quality.",
+    tip:"'Complaint' = शिकायत. Always inform your manager of complaints.",
+    blank:'We have received a ___ about the quality.',
+    answer:'complaint',
+    options:['report','warning','message']
+  },
+  {
+    badge:"💼 Office",
+    hindi:"क्या आप मुझे उस ऑर्डर की जानकारी दे सकते हैं?",
+    english:"Can you give me the details of that order?",
+    tip:"'Details' = जानकारी. Polite way to ask for information.",
+    blank:'Can you give me the ___ of that order?',
+    answer:'details',
+    options:['price','date','name']
+  },
+];
+
+let currentLesson = 0;
+let isFlipped = false;
+let learned = new Set();
+let quizOrder = [];
+let quizIndex = 0;
+let score = 0;
+let streak = 0;
+let quizLocked = false;
+let audioCtx = null;
+
+function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+function showScreen(id) { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function updateProgressBadge() { document.getElementById('progressBadge').textContent = learned.size + '/24 LEARNED'; }
+
+function startLessons() { currentLesson=0; isFlipped=false; renderLesson(); showScreen('lessonScreen'); }
+
+function renderLesson() {
+  const w = lessons[currentLesson];
+  document.getElementById('lessonCounter').textContent = (currentLesson+1)+' / '+lessons.length;
+  document.getElementById('wordBadge').textContent = w.badge;
+  document.getElementById('cardHindi').textContent = w.hindi;
+  document.getElementById('cardSentence').textContent = '→ ' + w.english.replace(w.answer, '___');
+  document.getElementById('cardEnglish').textContent = w.english;
+  document.getElementById('tipText').textContent = w.tip;
+
+  isFlipped=false;
+  document.getElementById('cardFront').style.display='';
+  document.getElementById('cardBack').style.display='none';
+  document.getElementById('flashCard').classList.remove('flipped');
+  document.getElementById('prevBtn').style.visibility = currentLesson===0?'hidden':'visible';
+
+  const nextBtn = document.getElementById('nextBtn');
+  if (currentLesson===lessons.length-1) { nextBtn.textContent='QUIZ 🎯'; nextBtn.onclick=startQuiz; nextBtn.className='quiz-start-btn'; }
+  else { nextBtn.textContent='NEXT →'; nextBtn.onclick=nextLesson; nextBtn.className='nav-btn'; }
+
+  const lb=document.getElementById('learnedBtn');
+  lb.textContent=learned.has(currentLesson)?'✅ DONE':'✓ LEARNED';
+  lb.className=learned.has(currentLesson)?'learned-btn done':'learned-btn';
+}
+
+function flipCard() {
+  isFlipped=!isFlipped;
+  document.getElementById('cardFront').style.display=isFlipped?'none':'';
+  document.getElementById('cardBack').style.display=isFlipped?'':'none';
+  document.getElementById('flashCard').classList.toggle('flipped',isFlipped);
+}
+
+function markLearned() { learned.add(currentLesson); document.getElementById('learnedBtn').textContent='✅ DONE'; document.getElementById('learnedBtn').className='learned-btn done'; updateProgressBadge(); }
+function prevLesson() { if(currentLesson>0){currentLesson--;renderLesson();} }
+function nextLesson() { if(currentLesson<lessons.length-1){currentLesson++;renderLesson();} }
+
+function startQuiz() {
+  quizOrder=shuffle(lessons.map((_,i)=>i));
+  quizIndex=0; score=0; streak=0; quizLocked=false;
+  renderQuiz(); showScreen('quizScreen');
+}
+
+function renderQuiz() {
+  const w = lessons[quizOrder[quizIndex]];
+  document.getElementById('quizCounter').textContent=(quizIndex+1)+' / '+lessons.length;
+  document.getElementById('scoreBadge').textContent='⭐ '+score+' PTS';
+  document.getElementById('progressFill').style.width=(quizIndex/lessons.length*100)+'%';
+  document.getElementById('quizHindiSentence').textContent = w.hindi;
+
+  // Build sentence with highlighted blank
+  const parts = w.blank.split('___');
+  const sentEl = document.getElementById('quizSentence');
+  sentEl.innerHTML = '';
+  const before = document.createTextNode(parts[0]);
+  const blankSpan = document.createElement('span');
+  blankSpan.className='quiz-blank';
+  blankSpan.textContent=' ___ ';
+  const after = document.createTextNode(parts[1]||'');
+  sentEl.appendChild(before);
+  sentEl.appendChild(blankSpan);
+  sentEl.appendChild(after);
+
+  const sb=document.getElementById('streakBadge');
+  sb.style.display=streak>=2?'':'none';
+  if(streak>=2) sb.textContent='🔥 '+streak+' streak!';
+  document.getElementById('streakPop').style.display='none';
+
+  const options=shuffle([w.answer,...w.options]);
+  const grid=document.getElementById('optionsGrid');
+  grid.innerHTML='';
+  options.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.className='option-btn';
+    btn.textContent=opt;
+    btn.onclick=()=>handleAnswer(opt,w.answer);
+    grid.appendChild(btn);
+  });
+}
+
+function handleAnswer(selected,correct) {
+  if(quizLocked) return;
+  quizLocked=true;
+  const isCorrect=selected===correct;
+  playTone(isCorrect);
+  document.querySelectorAll('.option-btn').forEach(btn=>{
+    btn.disabled=true;
+    if(btn.textContent===correct) btn.classList.add('correct');
+    else if(btn.textContent===selected) btn.classList.add('wrong');
+  });
+  if(isCorrect){score++;streak++;if(streak>=3){const pop=document.getElementById('streakPop');pop.textContent='🔥 शानदार! '+streak+' correct in a row!';pop.style.display='';}}
+  else{streak=0;}
+  setTimeout(()=>{quizLocked=false;quizIndex++;if(quizIndex>=lessons.length)showResult();else renderQuiz();},1200);
+}
+
+function showResult() {
+  const pct=Math.round(score/lessons.length*100);
+  document.getElementById('resultEmoji').textContent=pct>=80?'🏆':pct>=50?'👍':'📚';
+  document.getElementById('resultTitle').textContent=pct>=80?'Excellent Work!':pct>=50?'Good Job! Keep Going!':'Keep Practising!';
+  document.getElementById('resultScore').textContent=score+' / '+lessons.length;
+  document.getElementById('resultPercent').textContent=pct+'% correct — '+(pct>=80?'शानदार!':pct>=50?'अच्छा!':'कोशिश जारी रखो!');
+  showScreen('resultScreen');
+}
+
+function goHome() { showScreen('homeScreen'); }
+
+function playTone(correct) {
+  try {
+    if(!audioCtx) audioCtx=new AudioContext();
+    const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
+    osc.connect(gain);gain.connect(audioCtx.destination);
+    osc.frequency.value=correct?540:200;osc.type=correct?'sine':'sawtooth';
+    gain.gain.setValueAtTime(0.25,audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.35);
+    osc.start();osc.stop(audioCtx.currentTime+0.35);
+  }catch(_){}
+}
+</script>
+</body>
+</html>
